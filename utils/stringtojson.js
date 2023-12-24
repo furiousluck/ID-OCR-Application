@@ -6,6 +6,9 @@ function convertStringtoJSON(inputString){
     const dateOfBirth = lines[3].split(': ')[1].trim();
     const dateOfIssue = lines[4].split(': ')[1].trim();
     const dateOfExpiry = lines[5].split(': ')[1].trim();
+    if (idNumber === "NA" || name === "NA" || lastName === "NA" || dateOfBirth === "NA" || dateOfIssue === "NA" || dateOfExpiry === "NA") {
+        return "NA";
+    }
     const jsonData = {
         "identification_number": idNumber,
         "name": name,
