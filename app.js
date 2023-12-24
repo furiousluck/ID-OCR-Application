@@ -205,11 +205,7 @@ app.get('/data/search', async (req, res) => {
       data = await datahandle.find({idNumber:value}).select('-__v -_id').exec();
     }
     else{
-      const filter = {
-        [type]: { $regex: new RegExp(value, 'i') 
-      }
-    }
-      data = await datahandle.find({type:filter}).select('-__v -_id').exec();
+      data = await datahandle.find({type:/value$/}).select('-__v -_id').exec();
     }
     console.log((data));
     return res.status(200).json(data);
