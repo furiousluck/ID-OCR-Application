@@ -1,5 +1,6 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require("fs");
+require('dotenv').config();
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
@@ -13,12 +14,13 @@ function fileToGenerativePart(path, mimeType) {
     };
   }
 
-async function run(img) {
+async function run(path,mimeType) {
     // For text-and-image input (multimodal), use the gemini-pro-vision model
+    // console.log(process.env.API_KEY)
     const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
-    const prompt = "extract id number, name, last name, date of birth, date of issue and date of expiry from the given image in english";
+    const prompt = "extract id number, name, last name, date of birth, date of issue and date of expiry from the given image in english and convert date into dd/mm/yyyy format,if no any data missing mark it as NA";
     const imageParts = [
-        img
+        fileToGenerativePart(path,mimeType)
       ];
     
     const result = await model.generateContent([prompt,...imageParts]);

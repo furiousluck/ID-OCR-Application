@@ -3,6 +3,7 @@ const app = express();
 const fs = require('fs');
 const multer = require('multer');
 const {run } = require('./utils/gpt.js');
+const {convertStringtoJSON} = require('./utils/stringtojson.js');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -31,12 +32,18 @@ app.get('/', (req, res) => {
 
 app.post('/upload', upload, async (req, res) => {
     try {
-      const imagePath = req.file.path;
-      const result = await run(imagePath); // Pass the image path to the Gemini-Pro Vision function
-      res.json(result); // Send the extracted information as JSON
+      console.log(req.file);
+      const result = await run(req.file.path,req.file.mimetype); // Pass the image path to the Gemini-Pro Vision function
+      const jsonData = convertStringtoJSON(result);
+      res.statusCode=200;
+      res.setHeader("Content-Type", "application/json");
+      res.write(JSON.stringify(jsonData));
+      res.end();
+      // res.json(jsonData); // Send the extracted information as JSON
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: "Failed to process image" });
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Could not process image" }));
     }
   });
 
