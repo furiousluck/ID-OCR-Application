@@ -7,9 +7,10 @@ const {convertStringtoJSON} = require('./utils/stringtojson.js');
 const Grid = require('gridfs-stream');
 const mongoose = require('mongoose');
 const path = require('path');
-var imgSchema = require('./utils/model.js');
-const datahandle = require('./utils/data-model.js');
+var imgSchema = require('./model/model.js');
+const datahandle = require('./model/data-model.js');
 const { toArray } = require('./utils/toarray.js');
+const http = require('http');
 
 require('dotenv').config();
 
@@ -41,7 +42,6 @@ app.get('/', (req, res) => {
 app.get('/images', async (req, res) => {
   try {
     const images = await imgSchema.find();
-
     // Process each image, for example, log its properties
     // images.forEach(element => {
     //   console.log('Image Desc:', element.desc);
@@ -56,6 +56,8 @@ app.get('/images', async (req, res) => {
   }
 });
 
+
+//Endpoint to create a new OCR Record
 app.post('/upload', upload, async (req, res) => {
   try {
     console.log(req.file);
@@ -132,4 +134,65 @@ app.post('/upload', upload, async (req, res) => {
 const PORT = 5000 || process.env.PORT;
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
+});
+
+
+//routes
+//get all data
+app.get('/data', async (req, res) => {
+  try {
+    const data = await datahandle.find().select('-__v -_id').exec();
+    return res.status(200).json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//delete specific data
+app.delete('/data/remove/:id', async(req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await datahandle.findOne({ idNumber: id });
+    if (!data) {
+      return res.status(404).send('Data not found');
+    } else {
+      // Modify the status before saving it back
+      data.status = 'Deleted';
+      // Use the save method to update the document
+      await data.save();
+      await datahandle.findOneAndDelete({ idNumber: id });
+      return res.status(200).json('Data deleted successfully')
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//update data
+app.patch('/data/update/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await datahandle.findOneAndUpdate({ idNumber: id }, req.body, { new: true, runValidators: true });
+
+    if (!data) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Data not found'
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        datahandle: data
+      }
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'fail',
+      message: err.message
+    });
+  }
 });
