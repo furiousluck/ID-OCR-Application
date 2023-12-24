@@ -9,6 +9,7 @@
 
 <body>
     <h1>ID Convertor</h1>
+    <p>Use only png and jpeg only</p>
     <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
         <input type="file" name="avatar" id="avatarInput" />
         <button type="button" onclick="submitForm()">Convert</button>
@@ -16,7 +17,24 @@
 
     <h2>Result:</h2>
     <div id="jsonOutput"></div>
+    <!-- Filter Section -->
+    <h2>Filter:</h2>
+    <form id="filterForm">
+        <!-- Dropdown Menu for Status -->
+        <label for="statusFilter">Status:</label>
+        <select id="statusFilter" name="status">
+            <option value="idNumber">Id Number</option>
+            <option value="firstname">First Name</option>
+            <option value="lastName">Last Name</option>
+        </select>
 
+        <!-- Search Text Box for ID Number -->
+        <label for="idNumberFilter">Enter Value</label>
+        <input type="text" id="idNumberFilter" name="idNumber" placeholder="Enter Search Term">
+        <!-- Submit Button -->
+        <button type="button" onclick="fetchAndDisplayData()">Filter</button>
+    </form>
+    <div id="dataContainer"></div>
     <h2>Uploaded Images:</h2>
     <div id="imageContainer"></div>
 
@@ -32,6 +50,8 @@
             }
 
             const formData = new FormData(document.getElementById('uploadForm'));
+            const jsonOutputElement = $('#jsonOutput');
+            jsonOutputElement.empty();
 
             $.ajax({
                 type: 'POST',
@@ -52,7 +72,6 @@
         function displayJsonOutput(jsonData) {
             const jsonOutputElement = $('#jsonOutput');
             jsonOutputElement.empty(); // Clear previous content
-
             const jsonText = JSON.stringify(jsonData, null, 2);
             const lines = jsonText.split('\n');
 
@@ -60,7 +79,6 @@
                 const formattedLine = $('<div></div>').text(line);
                 jsonOutputElement.append(formattedLine);
             });
-
             // Display the image link if available in the response
             if (jsonData.imageLink) {
                 const imageLink = $('<img>').attr('src', jsonData.imageLink).attr('alt', 'Processed Image');
@@ -102,7 +120,76 @@
                 });
             }
         });
+        function fetchAndDisplayData() {
+            // Fetch data based on filter criteria
+            const statusFilter = document.getElementById('statusFilter').value;
+            const idNumberFilter = document.getElementById('idNumberFilter').value;
+            console.log(statusFilter, idNumberFilter)
+            // Use AJAX or fetch to send a request to your server endpoint with filter parameters
+            // Update the URL to match your server route for fetching filtered data
+            const url = `/data/search?type=${statusFilter}&value=${idNumberFilter}`;
+
+            fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // Display the filtered data in a table on the HTML page
+            const filteredDataContainer = document.getElementById('dataContainer');
+            filteredDataContainer.innerHTML = '';
+            // Create a table element
+            const table = document.createElement('table');
+            table.border = '1';
+            // Create table headers
+            const headers = ['ID Number', 'First Name', 'Last Name', 'Date of Birth', 'Date of Issue', 'Date of Expiry'];
+            const headerRow = document.createElement('tr');
+
+            headers.forEach(headerText => {
+                const header = document.createElement('th');
+                header.appendChild(document.createTextNode(headerText));
+                headerRow.appendChild(header);
+            });
+
+            table.appendChild(headerRow);
+
+            // Create table rows
+            data.forEach(item => {
+                const row = document.createElement('tr');
+
+                // Add data cells to the row
+                const idNumberCell = document.createElement('td');
+                idNumberCell.appendChild(document.createTextNode(item.idNumber));
+                row.appendChild(idNumberCell);
+
+                const firstNameCell = document.createElement('td');
+                firstNameCell.appendChild(document.createTextNode(item.firstname));
+                row.appendChild(firstNameCell);
+
+                const lastNameCell = document.createElement('td');
+                lastNameCell.appendChild(document.createTextNode(item.lastName));
+                row.appendChild(lastNameCell);
+
+                const dobCell = document.createElement('td');
+                dobCell.appendChild(document.createTextNode(item.dateOfBirth));
+                row.appendChild(dobCell);
+
+                const doiCell = document.createElement('td');
+                doiCell.appendChild(document.createTextNode(item.dateOfIssue));
+                row.appendChild(doiCell);
+
+                const doeCell = document.createElement('td');
+                doeCell.appendChild(document.createTextNode(item.dateOfExpiry));
+                row.appendChild(doeCell);
+
+                // Add the row to the table
+                table.appendChild(row);
+            });
+
+            // Append the table to the container
+            filteredDataContainer.appendChild(table);
+        })
+        .catch(error => {
+            console.error('Error fetching filtered data:', error);
+        });
+    }
     </script>
 </body>
-
 </html>

@@ -10,7 +10,7 @@ const path = require('path');
 var imgSchema = require('./model/model.js');
 const datahandle = require('./model/data-model.js');
 const { toArray } = require('./utils/toarray.js');
-const http = require('http');
+const fse = require('fs-extra');
 
 require('dotenv').config();
 
@@ -42,12 +42,6 @@ app.get('/', (req, res) => {
 app.get('/images', async (req, res) => {
   try {
     const images = await imgSchema.find();
-    // Process each image, for example, log its properties
-    // images.forEach(element => {
-    //   console.log('Image Desc:', element.desc);
-    //   console.log('Image Data:', element.img.data); // Assuming 'img' is a field in your schema
-    // });
-
     // Send the images as JSON response
     res.status(200).json(images);
   } catch (err) {
@@ -68,9 +62,6 @@ app.post('/upload', upload, async (req, res) => {
     if(jsonData=="NA"){
       x1=0;
     }
-    // res.statusCode=200;
-    // res.setHeader("Content-Type", "application/json");
-    // res.write(JSON.stringify(jsonData));
     // Read the image file and convert it to base64
     const imageData = fs.readFileSync(path.join(__dirname, '/uploads/', req.file.filename));
     const base64Image = Buffer.from(imageData).toString('base64');
@@ -121,6 +112,13 @@ app.post('/upload', upload, async (req, res) => {
   .finally(() => {
     // Make sure to end the response after handling the async operation
     res.end();
+    fse.emptyDir('./uploads', err => {
+      if (err) {
+        console.error('Error emptying uploads folder:', err);
+      } else {
+        console.log('uploads folder emptied successfully');
+      }
+    });
   });
     // res.json(jsonData); // Send the extracted information as JSON
   } catch (error) {
@@ -194,5 +192,29 @@ app.patch('/data/update/:id', async (req, res) => {
       status: 'fail',
       message: err.message
     });
+  }
+});
+
+app.get('/data/search', async (req, res) => {
+  const type = req.query.type;
+  const value = req.query.value;
+  console.log(type,value,typeof value);
+  try{
+    let data;
+    if(type==="idNumber"){
+      data = await datahandle.find({idNumber:value}).select('-__v -_id').exec();
+    }
+    else{
+      const filter = {
+        [type]: { $regex: new RegExp(value, 'i') 
+      }
+    }
+      data = await datahandle.find({type:filter}).select('-__v -_id').exec();
+    }
+    console.log((data));
+    return res.status(200).json(data);
+  }catch(err){
+    console.error(err);
+    res.status(500).send('Internal Server Error');
   }
 });
