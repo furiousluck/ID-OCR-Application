@@ -33,8 +33,8 @@ Instructions on how to install the project, for example:
 
 **List of the routes:**
 - GetAllData: POST /data/
-- DeleteData: DELETE /data/:id
-- UpdateData: PATCH /data/:id
+- DeleteData: DELETE /data/remove/:id
+- UpdateData: PATCH /data/update/:id
 - SearchData: GET /data/search?type={type}&value={value}
 - UploadData: POST /upload
 - GetImage: GET /images
