@@ -31,6 +31,7 @@
         <!-- Dropdown Menu for Status -->
         <label for="statusFilter">Status:</label>
         <select id="statusFilter" name="status">
+            <option value="allData">All Data</option>
             <option value="idNumber">Id Number</option>
             <option value="firstname">First Name</option>
             <option value="lastName">Last Name</option>
@@ -153,7 +154,10 @@
             console.log(statusFilter, idNumberFilter)
             // Use AJAX or fetch to send a request to your server endpoint with filter parameters
             // Update the URL to match your server route for fetching filtered data
-            const url = `/data/search?type=${statusFilter}&value=${idNumberFilter}`;
+            let url = '';
+            if(statusFilter === 'allData')
+                url = `/data/`;
+            else url = `/data/search?type=${statusFilter}&value=${idNumberFilter}`;
 
             fetch(url)
                 .then(response => response.json())
@@ -165,7 +169,7 @@
                     const table = document.createElement('table');
                     table.border = '1';
                     // Create table headers
-                    const headers = ['ID Number', 'First Name', 'Last Name', 'Date of Birth', 'Date of Issue', 'Date of Expiry'];
+                    const headers = ['ID Number', 'First Name', 'Last Name', 'Date of Birth', 'Date of Issue', 'Date of Expiry','Status'];
                     const headerRow = document.createElement('tr');
 
                     headers.forEach(headerText => {
@@ -204,6 +208,10 @@
                         const doeCell = document.createElement('td');
                         doeCell.appendChild(document.createTextNode(item.dateOfExpiry));
                         row.appendChild(doeCell);
+
+                        const statusCell = document.createElement('td');
+                        statusCell.appendChild(document.createTextNode(item.status));
+                        row.appendChild(statusCell);
 
                         // Add the row to the table
                         table.appendChild(row);
