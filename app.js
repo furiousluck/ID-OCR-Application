@@ -198,19 +198,18 @@ app.patch('/data/update/:id', async (req, res) => {
 app.get('/data/search', async (req, res) => {
   const type = req.query.type;
   const value = req.query.value;
-  console.log(type,value,typeof value);
-  try{
-    let data;
-    if(type==="idNumber"){
-      data = await datahandle.find({idNumber:value}).select('-__v -_id').exec();
-    }
-    else{
-      data = await datahandle.find({type:/value$/}).select('-__v -_id').exec();
-    }
-    console.log((data));
+
+  if (!type || !value) {
+    return res.status(400).send('Bad Request: Missing type or value');
+  }
+
+  try {
+    const query = type === "idNumber" ? { idNumber: value } : { [type]: new RegExp(value + '$') };
+    const data = await datahandle.find(query).select('-__v -_id').exec();
+    
     return res.status(200).json(data);
-  }catch(err){
+  } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error');
-  }
+  }
 });
