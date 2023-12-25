@@ -54,6 +54,9 @@ app.get("/images", async (req, res) => {
 app.post("/upload", upload, async (req, res) => {
   try {
     console.log(req.file);
+    if(!req.file){
+      res.status(400).json({error:"Please upload a file"});
+    }
     const result = await run(req.file.path, req.file.mimetype); // Pass the image path to the Gemini-Pro Vision function
     const jsonData = convertStringtoJSON(result);
     const checkdeddata = toArray(result);
