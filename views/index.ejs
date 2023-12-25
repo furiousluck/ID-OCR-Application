@@ -9,12 +9,15 @@
 </head>
 
 <body>
-    <h1>ID Convertor</h1>
+    <h1 style="text-align: center;">ID Convertor</h1>
+    <br>
     <p>Use only png and jpeg only</p>
     <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="avatar" id="avatarInput" />
+        <input type="file" name="avatar" id="avatarInput" class="form-control w-50 " />
+        <br>
         <button type="button" onclick="submitForm()">Convert</button>
     </form>
+    <br>
 
     <h2>Result:</h2>
     <div class="spinner-border" role="status" style="display: none;" id="loadingSpinner">
@@ -22,6 +25,7 @@
     </div>
     <div id="jsonOutput"></div>
     <!-- Filter Section -->
+    <br>
     <h2>Filter:</h2>
     <form id="filterForm">
         <!-- Dropdown Menu for Status -->
@@ -39,6 +43,7 @@
         <button type="button" onclick="fetchAndDisplayData()">Filter</button>
     </form>
     <div id="dataContainer"></div>
+    <br>
     <h2>Uploaded Images:</h2>
     <div id="imageContainer"></div>
 
@@ -111,16 +116,27 @@
                         images.forEach((image) => {
                             // Create a div for each image
                             const imageDiv = $('<div></div>');
-                            console.log(image.img.data.toString())
-                            // Display the image
-                            const imageElement = $('<img>').attr('src', 'data:' + image.img.contentType + ';base64,' + btoa(image.img.data)).attr('alt', 'Uploaded Image');
-                            imageDiv.append(imageElement);
-                            // Display the message
-                            const messageElement = $('<p></p>').text('Message: ' + image.desc);
-                            imageDiv.append(messageElement);
+                            // Display the image using FileReader
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                const imageDataURL = e.target.result;
+                                console.log(imageDataURL);
+                                // Display the image
+                                const imageElement = $('<img>').attr('src', imageDataURL).attr('alt', 'Uploaded Image');
+                                imageDiv.append(imageElement);
 
-                            // Append the image div to the container
-                            imageContainer.append(imageDiv);
+                                // Display the message
+                                const messageElement = $('<p></p>').text('Message: ' + (image.desc || 'No description available'));
+                                imageDiv.append(messageElement);
+
+                                // Append the image div to the container
+                                imageContainer.append(imageDiv);
+                            };
+
+                            // Convert the image data to a Data URL
+                            const blob = new Blob([new Uint8Array(image.img.data)], { type: image.img.contentType });
+                            console.log(blob)
+                            reader.readAsDataURL(blob);
                         });
                     },
                     error: function (error) {

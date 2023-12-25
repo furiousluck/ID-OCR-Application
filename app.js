@@ -41,13 +41,7 @@ app.get("/", (req, res) => {
 // Endpoint to retrieve all images with message
 app.get("/images", async (req, res) => {
   try {
-    const images = await imgSchema.find();
-    // Process each image, for example, log its properties
-    // images.forEach(element => {
-    //   console.log('Image Desc:', element.desc);
-    //   console.log('Image Data:', element.img.data); // Assuming 'img' is a field in your schema
-    // });
-
+    const images = await imgSchema.find().select("-__v -_id").exec();
     // Send the images as JSON response
     res.status(200).json(images);
   } catch (err) {
