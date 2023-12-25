@@ -112,13 +112,13 @@ app.post("/upload", upload, async (req, res) => {
       .finally(() => {
         // Make sure to end the response after handling the async operation
         res.end();
-        fse.emptyDir("./uploads", (err) => {
-          if (err) {
-            console.error("Error emptying uploads folder:", err);
-          } else {
-            console.log("uploads folder emptied successfully");
-          }
-        });
+        // fse.emptyDir("./uploads", (err) => {
+        //   if (err) {
+        //     console.error("Error emptying uploads folder:", err);
+        //   } else {
+        //     console.log("uploads folder emptied successfully");
+        //   }
+        // });
       });
     // res.json(jsonData); // Send the extracted information as JSON
   } catch (error) {
