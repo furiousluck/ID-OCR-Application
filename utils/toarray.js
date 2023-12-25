@@ -7,7 +7,7 @@ function toArray(inputString){
     const dateOfIssue = lines[4].split(': ')[1].trim();
     const dateOfExpiry = lines[5].split(': ')[1].trim();
     if(idNumber==="NA" || name==="NA" || lastName==="NA" || dateOfBirth==="NA" || dateOfIssue==="NA" || dateOfExpiry==="NA"){
-        return ["NA","NA","NA","NA","NA","NA",Dates.now(),"Failed"]
+        return ["NA","NA","NA","NA","NA","NA",Date.now(),"Failed"]
     }
     let arr = [idNumber,name,lastName,dateOfBirth,dateOfIssue,dateOfExpiry,Date.now(),"Success"];
     return arr;

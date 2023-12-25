@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ID Detector</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -16,6 +17,9 @@
     </form>
 
     <h2>Result:</h2>
+    <div class="spinner-border" role="status" style="display: none;" id="loadingSpinner">
+        <span class="visually-hidden"></span>
+    </div>
     <div id="jsonOutput"></div>
     <!-- Filter Section -->
     <h2>Filter:</h2>
@@ -40,6 +44,8 @@
 
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
         function submitForm() {
             const fileInput = document.getElementById('avatarInput');
@@ -48,10 +54,11 @@
                 alert('File size exceeds the limit. Please choose a file smaller than 2 MB.');
                 return;
             }
-
             const formData = new FormData(document.getElementById('uploadForm'));
             const jsonOutputElement = $('#jsonOutput');
             jsonOutputElement.empty();
+            // Show loading spinner
+            document.getElementById('loadingSpinner').style.display = '';
 
             $.ajax({
                 type: 'POST',
@@ -60,11 +67,14 @@
                 contentType: false,
                 processData: false,
                 success: function (response) {
+                    document.getElementById('loadingSpinner').style.display = 'none';
                     displayJsonOutput(response);
                 },
                 error: function (error) {
+                    document.getElementById('loadingSpinner').style.display = 'none';
                     console.error('Error:', error);
-                    alert('Error processing file. Please try again.');
+                    displayJsonOutput("File is blurry or not correct format.");
+                    alert('Error processing file. Please try again. or Try Using a different image');
                 }
             });
         }
@@ -130,66 +140,67 @@
             const url = `/data/search?type=${statusFilter}&value=${idNumberFilter}`;
 
             fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            // Display the filtered data in a table on the HTML page
-            const filteredDataContainer = document.getElementById('dataContainer');
-            filteredDataContainer.innerHTML = '';
-            // Create a table element
-            const table = document.createElement('table');
-            table.border = '1';
-            // Create table headers
-            const headers = ['ID Number', 'First Name', 'Last Name', 'Date of Birth', 'Date of Issue', 'Date of Expiry'];
-            const headerRow = document.createElement('tr');
+                .then(response => response.json())
+                .then(data => {
+                    // Display the filtered data in a table on the HTML page
+                    const filteredDataContainer = document.getElementById('dataContainer');
+                    filteredDataContainer.innerHTML = '';
+                    // Create a table element
+                    const table = document.createElement('table');
+                    table.border = '1';
+                    // Create table headers
+                    const headers = ['ID Number', 'First Name', 'Last Name', 'Date of Birth', 'Date of Issue', 'Date of Expiry'];
+                    const headerRow = document.createElement('tr');
 
-            headers.forEach(headerText => {
-                const header = document.createElement('th');
-                header.appendChild(document.createTextNode(headerText));
-                headerRow.appendChild(header);
-            });
+                    headers.forEach(headerText => {
+                        const header = document.createElement('th');
+                        header.appendChild(document.createTextNode(headerText));
+                        headerRow.appendChild(header);
+                    });
 
-            table.appendChild(headerRow);
+                    table.appendChild(headerRow);
 
-            // Create table rows
-            data.forEach(item => {
-                const row = document.createElement('tr');
+                    // Create table rows
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
 
-                // Add data cells to the row
-                const idNumberCell = document.createElement('td');
-                idNumberCell.appendChild(document.createTextNode(item.idNumber));
-                row.appendChild(idNumberCell);
+                        // Add data cells to the row
+                        const idNumberCell = document.createElement('td');
+                        idNumberCell.appendChild(document.createTextNode(item.idNumber));
+                        row.appendChild(idNumberCell);
 
-                const firstNameCell = document.createElement('td');
-                firstNameCell.appendChild(document.createTextNode(item.firstname));
-                row.appendChild(firstNameCell);
+                        const firstNameCell = document.createElement('td');
+                        firstNameCell.appendChild(document.createTextNode(item.firstname));
+                        row.appendChild(firstNameCell);
 
-                const lastNameCell = document.createElement('td');
-                lastNameCell.appendChild(document.createTextNode(item.lastName));
-                row.appendChild(lastNameCell);
+                        const lastNameCell = document.createElement('td');
+                        lastNameCell.appendChild(document.createTextNode(item.lastName));
+                        row.appendChild(lastNameCell);
 
-                const dobCell = document.createElement('td');
-                dobCell.appendChild(document.createTextNode(item.dateOfBirth));
-                row.appendChild(dobCell);
+                        const dobCell = document.createElement('td');
+                        dobCell.appendChild(document.createTextNode(item.dateOfBirth));
+                        row.appendChild(dobCell);
 
-                const doiCell = document.createElement('td');
-                doiCell.appendChild(document.createTextNode(item.dateOfIssue));
-                row.appendChild(doiCell);
+                        const doiCell = document.createElement('td');
+                        doiCell.appendChild(document.createTextNode(item.dateOfIssue));
+                        row.appendChild(doiCell);
 
-                const doeCell = document.createElement('td');
-                doeCell.appendChild(document.createTextNode(item.dateOfExpiry));
-                row.appendChild(doeCell);
+                        const doeCell = document.createElement('td');
+                        doeCell.appendChild(document.createTextNode(item.dateOfExpiry));
+                        row.appendChild(doeCell);
 
-                // Add the row to the table
-                table.appendChild(row);
-            });
+                        // Add the row to the table
+                        table.appendChild(row);
+                    });
 
-            // Append the table to the container
-            filteredDataContainer.appendChild(table);
-        })
-        .catch(error => {
-            console.error('Error fetching filtered data:', error);
-        });
-    }
+                    // Append the table to the container
+                    filteredDataContainer.appendChild(table);
+                })
+                .catch(error => {
+                    console.error('Error fetching filtered data:', error);
+                });
+        }
     </script>
 </body>
+
 </html>
