@@ -18,6 +18,7 @@ Instructions on how to install the project, for example:
 
 - Deployed on OnRender
 - [Link](https://project-1-i21e.onrender.com)
+- Note: The app is deployed on a free tier, so it might take some time to load the first time.
 
 
 ## Features
