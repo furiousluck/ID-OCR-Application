@@ -20,6 +20,12 @@ Instructions on how to install the project, for example:
 - [Link](https://project-1-i21e.onrender.com)
 - Note: The app is deployed on a free tier, so it might take some time to load the first time.
 
+## Demo
+
+
+https://github.com/furiousluck/ID-OCR-Application/assets/79402080/ea3d01f2-a93c-4a94-8926-dff58ed58be3
+
+
 
 ## Features
 
