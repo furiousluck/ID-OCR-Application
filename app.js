@@ -145,9 +145,9 @@ app.post("/upload", upload, async (req, res) => {
 });
 
 app.use("/data", dataRoutes);
-app.get("/", (req, res) => {
-  res.redirect("https://id-ocr-application.vercel.app/");
-});
+// app.get("/", (req, res) => {
+//   res.redirect("https://id-ocr-application.vercel.app/");
+// });
 
 //to start server
 const PORT = 5003 || process.env.PORT;
