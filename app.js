@@ -19,18 +19,6 @@ require("dotenv").config();
 
 mongoose.connect(process.env.MONGO_URI).then(console.log("DB Connected"));
 
-app.use((req, res, next) => {
-  if (req.hostname === "project-1-i21e.onrender.com") {
-    if (req.originalUrl !== "/" || req.originalUrl !== "") {
-      res.redirect("https://id-ocr-application.vercel.app/");
-    } else {
-      next(); // Proceed to next middleware for /status endpoint
-    }
-  } else {
-    next(); // Proceed for other domains
-  }
-});
-
 app.use(cors(
   {
     origin: "*",
@@ -157,6 +145,9 @@ app.post("/upload", upload, async (req, res) => {
 });
 
 app.use("/data", dataRoutes);
+app.get("/", (req, res) => {
+  res.redirect("https://id-ocr-application.vercel.app/");
+});
 
 //to start server
 const PORT = 5003 || process.env.PORT;
