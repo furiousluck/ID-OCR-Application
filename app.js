@@ -20,10 +20,15 @@ require("dotenv").config();
 mongoose.connect(process.env.MONGO_URI).then(console.log("DB Connected"));
 
 app.use((req, res, next) => {
-  if (req.headers.host === "project-1-i21e.onrender.com") {
-    return res.redirect(301, "https://id-ocr-application.vercel.app/");
+  if (req.hostname === "project-1-i21e.onrender.com") {
+    if (req.originalUrl !== "/" || req.originalUrl !== "") {
+      res.redirect("https://id-ocr-application.vercel.app/");
+    } else {
+      next(); // Proceed to next middleware for /status endpoint
+    }
+  } else {
+    next(); // Proceed for other domains
   }
-  next();
 });
 
 app.use(cors(
