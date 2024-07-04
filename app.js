@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 
 app.use(cors(
   {
-    origin: "https://id-ocr-application.vercel.app/",
+    origin: "*",
   }
 ));
 app.use(express.json({ limit: "2mb" }));
