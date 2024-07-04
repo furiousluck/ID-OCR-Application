@@ -30,6 +30,7 @@ const App = () => {
     <div className="App">
       <a href="https://github.com/furiousluck/ID-OCR-Application">Github Repository!!</a>
       <h1>OCR Application</h1>
+      <h3>Note:The app will misbehave if the photo is not of a ID.</h3>
       {serverStatus ? (
         <>
           <Status />
