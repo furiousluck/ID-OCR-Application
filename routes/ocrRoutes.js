@@ -14,9 +14,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage}).single('avatar');
 
-router.get('/', (req, res) => {
-    res.render('index');
-});
 
 router.get('/images', getAllImages);
 router.get('/upload',upload, uploadImage);

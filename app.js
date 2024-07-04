@@ -42,10 +42,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single("avatar");
 app.set("view engine", "ejs");
 
-//routes
-app.get("/", (req, res) => {
-  res.render("index");
-});
 
 // Endpoint to retrieve all images with message
 app.get("/images", async (req, res) => {
