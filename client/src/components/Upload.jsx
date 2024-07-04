@@ -19,7 +19,7 @@ const Upload = ({ onUploadSuccess }) => {
       setUploading(true);
       setMessage("Uploading...");
 
-      axios.post("https://project-1-i21e.onrender.com/upload", formData)
+      axios.post("https://id-ocr-application-pcn9l.ondigitalocean.app/upload", formData)
         .then((response) => {
           if (response.data.error) {
             setMessage(response.data.error);

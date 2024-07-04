@@ -17,7 +17,7 @@ Instructions on how to install the project, for example:
 ## Deployment
 
 - Deployed on Render
-- [Link](https://project-1-i21e.onrender.com)
+- [Link](https://id-ocr-application.vercel.app/)
 - Note: The app is deployed on a free tier, so it might take some time to load the first time.
 
 ## Demo

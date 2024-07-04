@@ -6,7 +6,7 @@ const Images = ({ newImageData }) => {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    axios.get("https://project-1-i21e.onrender.com/data")
+    axios.get("https://id-ocr-application-pcn9l.ondigitalocean.app/data")
       .then((response) => {
         console.log(response.data);
         setImages(response.data);

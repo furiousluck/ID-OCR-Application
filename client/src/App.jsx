@@ -11,7 +11,7 @@ const App = () => {
 
   useEffect(() => {
     // Check server status on component mount
-    axios.get("https://project-1-i21e.onrender.com/status")
+    axios.get("https://id-ocr-application-pcn9l.ondigitalocean.app/status")
       .then((response) => {
         if (response.status === 200) {
           setServerStatus(true);
