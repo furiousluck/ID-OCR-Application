@@ -1,0 +1,12 @@
+.upload-container {
+  border: 2px dashed #000;
+  padding: 20px;
+  text-align: center;
+  background-color: #fff;
+  margin: 20px 0;
+  cursor: pointer;
+}
+
+.upload-container p {
+  margin: 10px 0;
+}

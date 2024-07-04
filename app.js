@@ -13,11 +13,13 @@ var imgSchema = require("./model/model.js");
 const datahandle = require("./model/data-model.js");
 const { toArray } = require("./utils/toarray.js");
 const fse = require("fs-extra");
+const cors = require("cors");
 
 require("dotenv").config();
 
 mongoose.connect(process.env.MONGO_URI).then(console.log("DB Connected"));
 
+app.use(cors());
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: false, limit: "2mb" }));
 
@@ -50,6 +52,10 @@ app.get("/images", async (req, res) => {
   }
 });
 
+app.get("/status", (req, res) => {
+  res.status(200).json({ status: "Server is running" });
+});
+
 //Endpoint to create a new OCR Record
 app.post("/upload", upload, async (req, res) => {
   try {
@@ -71,13 +77,15 @@ app.post("/upload", upload, async (req, res) => {
     const base64Image = Buffer.from(imageData).toString("base64");
     // console.log(base64Image);
     let x = "Data extracted successfully";
+    let xx=0;
     if (x1 == 0) {
       for (let i = 0; i < checkdeddata.length; i++) {
         if (checkdeddata[i] == "NA") {
           checkdeddata[i] = "NA";
+          xx++;
         }
       }
-      checkdeddata[7] = "Reject";
+      if(xx>3)checkdeddata[7] = "Reject";
       x = "Blurry Image.Retry Again!!";
     }
     var obj = {
@@ -139,7 +147,7 @@ app.post("/upload", upload, async (req, res) => {
 app.use("/data", dataRoutes);
 
 //to start server
-const PORT = 5000 || process.env.PORT;
+const PORT = 5003 || process.env.PORT;
 startServer();
 
 function startServer() {
